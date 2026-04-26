@@ -17,7 +17,18 @@
 
     <header class="app-header">
         <h1>HOSTEL LIFE TRACKER</h1>
-        <p class="subtitle">Pocket Money & Daily Grind Analytics</p>
+        <p class="subtitle">Pocket Money & Daily Grind Analytics <br><span style="font-size: 0.75rem; opacity: 0.7;">(Press <strong>Shift + E</strong> for Expense | <strong>Shift + H</strong> for Habits)</span></p>
+        
+        <div class="header-actions">
+            <button id="share-btn" class="btn-share" title="Copy stats to clipboard">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                Share Stats
+            </button>
+            <button id="reset-btn" class="btn-reset" title="Wipe all data and start over">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                Reset Tracker
+            </button>
+        </div>
     </header>
 
     <main class="dashboard-wrapper">
@@ -92,9 +103,17 @@
         <section class="data-zone">
 
             <div class="summary-grid">
-                <div class="glass-card summary-card">
-                    <h3>Total Spent</h3>
-                    <p id="total-expense" class="metric highlight-primary">₹0</p>
+                <div class="glass-card summary-card summary-flex">
+                    <div>
+                        <h3>Total Spent</h3>
+                        <p id="total-expense" class="metric highlight-primary">₹0</p>
+                    </div>
+                    
+                    <div class="donut-wrapper">
+                        <div id="expense-donut" class="donut-chart"></div>
+                        <div id="donut-tooltip" class="custom-tooltip">
+                            </div>
+                    </div>
                 </div>
                 <div class="glass-card summary-card">
                     <h3>Items Tracked</h3>
@@ -112,7 +131,12 @@
             <div class="glass-card">
                 <div class="budget-header">
                     <h3>Monthly Allowance</h3>
-                    <span class="budget-limit">Limit: ₹5000</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="budget-limit" id="budget-text">Limit: ₹5000</span>
+                        <button id="edit-budget-btn" class="edit-icon-btn" title="Edit Budget">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="budget-track">
                     <div class="budget-fill" id="budget-fill"></div>
@@ -124,16 +148,7 @@
 
                 <div class="history-container custom-scroll">
                     <ul id="history-list" class="history-list">
-                        <li class="empty-state" id="empty-state">
-                            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                            <p>No activity logged yet.</p>
-                        </li>
-                    </ul>
+                        </ul>
                 </div>
             </div>
 
@@ -152,6 +167,8 @@
         </div>
         <div class="footer-glow"></div>
     </footer>
+
+    <div id="toast-container" class="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
