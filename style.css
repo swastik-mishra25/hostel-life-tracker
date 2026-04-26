@@ -10,7 +10,6 @@
     --text-main: #0f172a;
     --text-muted: #64748b;
     
-    /* Your Electric Blue Theme */
     --primary: #3a47d5; 
     --primary-gradient: linear-gradient(90deg, #00d2ff 0%, #3a47d5 100%);
     --primary-hover: linear-gradient(90deg, #00bce6 0%, #313cb5 100%); 
@@ -37,9 +36,9 @@
 
 body {
     background-image: var(--bg-gradient);
-    /* Viewport Lock */
-    height: 100vh;
-    overflow: hidden;
+    /* 100dvh accounts for browser UI perfectly */
+    height: 100dvh; 
+    overflow: hidden; /* Locks the master window */
     display: flex;
     flex-direction: column;
     
@@ -57,7 +56,7 @@ body {
 }
 
 .app-header h1 {
-    font-size: 1.8rem; 
+    font-size: clamp(1.4rem, 2vw + 1rem, 1.8rem); /* Fluid Typography */
     font-weight: 800;
     letter-spacing: -0.05em;
     background: var(--primary-gradient);
@@ -70,21 +69,21 @@ body {
 .subtitle {
     color: var(--text-muted);
     font-weight: 500;
-    font-size: 0.9rem; 
+    font-size: clamp(0.8rem, 1vw + 0.5rem, 0.9rem); 
 }
 
 /* =========================================
-   MACRO LAYOUT ENGINE
+   MACRO LAYOUT ENGINE (The Elastic Panels)
    ========================================= */
 .dashboard-wrapper {
     display: grid;
     grid-template-columns: 1fr 1.3fr;
     gap: 1rem; 
-    max-width: 1100px;
+    max-width: 1200px;
     margin-inline: auto;
     
     flex: 1;
-    min-height: 0;
+    min-height: 0; /* Critical for preventing overflow */
     width: 100%;
 }
 
@@ -95,6 +94,10 @@ body {
     gap: 0.85rem; 
     height: 100%;
     min-height: 0;
+    /* This makes the individual columns scrollable if your screen is tiny! */
+    overflow-y: auto; 
+    overflow-x: hidden;
+    padding-right: 0.5rem; /* Prevents scrollbar from touching the edge */
 }
 
 /* =========================================
@@ -106,11 +109,12 @@ body {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 14px;
-    padding: 1rem; 
+    padding: clamp(1rem, 2vw, 1.25rem); /* Fluid padding */
     box-shadow: var(--glass-shadow);
     transition: transform 0.4s var(--ease-fluid), box-shadow 0.4s var(--ease-fluid);
     display: flex;
     flex-direction: column;
+    flex-shrink: 0; /* Stops cards from getting crushed */
 }
 
 .glass-card:hover {
@@ -121,7 +125,7 @@ body {
 .card-title {
     font-size: 1.05rem; 
     font-weight: 700;
-    margin-block-end: 0.6rem; 
+    margin-block-end: 0.8rem; 
     border-bottom: 2px solid rgba(0, 0, 0, 0.03);
     padding-bottom: 0.4rem;
     color: var(--text-main);
@@ -154,7 +158,7 @@ input[type="number"],
 input[type="date"],
 select {
     width: 100%;
-    padding: 0.45rem 0.75rem; 
+    padding: 0.5rem 0.75rem; 
     border: 2px solid transparent;
     border-radius: 8px;
     font-family: inherit;
@@ -177,7 +181,7 @@ select:focus {
     background: var(--primary-gradient);
     color: white;
     border: none;
-    padding: 0.6rem; 
+    padding: 0.65rem; 
     border-radius: 8px;
     font-weight: 700;
     font-size: 0.9rem;
@@ -215,20 +219,6 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
 /* =========================================
    MONTHLY HEATMAP COMPONENTS
    ========================================= */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-block-end: 0.5rem; 
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.calendar-header h3 {
-    font-size: 0.9rem;
-    font-weight: 700;
-}
-
 .github-wrapper {
   overflow-x: auto;
   padding-bottom: 0.25rem;
@@ -258,16 +248,13 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
   z-index: 10;
 }
 
-/* GitHub Grid Levels */
 .lvl-1 { background: #9be9a8; }
 .lvl-2 { background: #40c463; }
 .lvl-3 { background: #30a14e; }
 .lvl-4 { background: #216e39; }
 
-/* Dual-Data Expense Indicator */
 .day.has-expense {
     position: relative;
-    /* Uses an inset shadow so it doesn't break the 10x10 square sizing */
     box-shadow: inset 0 -3px 0 var(--danger); 
 }
 .day.has-expense:hover {
@@ -343,7 +330,7 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
 }
 
 .metric {
-    font-size: 1.6rem; 
+    font-size: clamp(1.4rem, 2vw + 1rem, 1.8rem); /* Fluid text for long numbers */
     font-weight: 800;
     margin-block-start: 0.2rem;
     letter-spacing: -0.03em;
@@ -357,7 +344,7 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
    ========================================= */
 .history-card {
     flex: 1;
-    min-height: 0; 
+    min-height: 200px; /* Guarantees the card doesn't vanish entirely on small screens */
 }
 
 .history-container {
@@ -415,10 +402,11 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
     color: var(--primary);
 }
 
-.custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
-.custom-scroll::-webkit-scrollbar-track { background: transparent; }
-.custom-scroll::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.15); border-radius: 20px; }
-.custom-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.25); }
+/* Global Custom Scrollbars for all scrollable zones */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.15); border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgba(0, 0, 0, 0.3); }
 
 /* =========================================
    ENTRANCE CHOREOGRAPHY
@@ -429,14 +417,118 @@ select { appearance: none; -webkit-appearance: none; cursor: pointer; }
 }
 
 /* =========================================
-   MOBILE RESPONSIVE FALLBACK
+   APP FOOTER 
    ========================================= */
+.app-footer {
+    position: relative;
+    padding-block: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; 
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.footer-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: -0.02em;
+}
+
+.author-name {
+    font-weight: 800;
+    background: linear-gradient(to right, #22d3ee, #3b82f6, #a855f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: filter 0.3s ease;
+    cursor: pointer;
+}
+
+.author-name:hover {
+    filter: brightness(1.25);
+}
+
+.footer-divider {
+    color: rgba(0, 0, 0, 0.15);
+    margin-inline: 0.5rem;
+}
+
+.footer-copyright {
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.4);
+    white-space: nowrap; /* FORCES the text to stay on one perfect line! */
+}
+
+.footer-glow {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.3), transparent);
+}
+
+@media (min-width: 768px) {
+    .footer-content {
+        flex-direction: row; 
+    }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN SYSTEM
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .dashboard-wrapper {
+        grid-template-columns: 1fr 1fr; 
+    }
+}
+
+/* Critical Breakpoint for Mobile/Tablets */
 @media (max-width: 850px) {
     body {
-        height: auto; 
-        overflow: auto;
+        height: auto; /* Frees the viewport completely */
+        overflow: auto; /* Allows normal page scrolling */
+        padding-block: 1.5rem;
     }
-    .dashboard-wrapper { grid-template-columns: 1fr; }
-    .summary-grid { grid-template-columns: 1fr; }
-    .app-header h1 { font-size: 1.8rem; }
+    
+    .dashboard-wrapper {
+        grid-template-columns: 1fr; 
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-zone, .data-zone {
+        overflow-y: visible; /* Kills the internal scrollbars */
+        height: auto; 
+    }
+
+    .history-card {
+        flex: none; 
+        height: auto; 
+    }
+
+    .history-container {
+        overflow-y: visible; 
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-inline: 0.75rem; 
+    }
+    .summary-grid {
+        grid-template-columns: 1fr; 
+    }
 }

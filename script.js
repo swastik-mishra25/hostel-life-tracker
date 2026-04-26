@@ -4,6 +4,9 @@
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 let habits = JSON.parse(localStorage.getItem('habits')) || [];
 
+// Master Budget Limit
+const MONTHLY_ALLOWANCE = 5000;
+
 // =========================================
 // 2. DOM ELEMENTS
 // =========================================
@@ -13,6 +16,10 @@ const timelineContainer = document.getElementById('github-timeline');
 const totalExpenseEl = document.getElementById('total-expense');
 const totalConsumptionEl = document.getElementById('total-consumption');
 const historyList = document.getElementById('history-list');
+const budgetFill = document.getElementById('budget-fill');
+
+// Automatically set the current year in the footer dynamically
+document.getElementById('current-year').textContent = new Date().getFullYear();
 
 // =========================================
 // 3. FORM CONTROLLERS (Data Capture)
@@ -61,7 +68,6 @@ habitForm.addEventListener('submit', function(e) {
 function generateTimeline() {
     timelineContainer.innerHTML = ''; 
 
-    // Create Dictionaries for BOTH datasets
     const activityMap = {};
     habits.forEach(h => {
         if (!activityMap[h.date]) activityMap[h.date] = 0;
@@ -81,7 +87,6 @@ function generateTimeline() {
         const d = new Date();
         d.setDate(today.getDate() - i); 
 
-        // Format: YYYY-MM-DD
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
@@ -90,22 +95,18 @@ function generateTimeline() {
         const cell = document.createElement("div");
         cell.classList.add("day");
 
-        // Grab data for this specific square
         const activityValue = activityMap[dateString] || 0;
         const expenseValue = expenseMap[dateString] || 0;
 
-        // 1. Set the Background Color based on Effort (Habits)
         if (activityValue > 0 && activityValue <= 2) cell.classList.add("lvl-1");
         else if (activityValue > 2 && activityValue <= 5) cell.classList.add("lvl-2");
         else if (activityValue > 5 && activityValue <= 8) cell.classList.add("lvl-3");
         else if (activityValue > 8) cell.classList.add("lvl-4"); 
 
-        // 2. Set the Expense Indicator
         if (expenseValue > 0) {
             cell.classList.add("has-expense");
         }
 
-        // 3. The Unified Hover Tooltip
         cell.title = `${d.toDateString()} \nGrind: ${activityValue} Tracked \nSpent: ₹${expenseValue}`;
 
         timelineContainer.appendChild(cell);
@@ -116,15 +117,39 @@ function generateTimeline() {
 // 5. HISTORY & METRICS RENDERER
 // =========================================
 function renderSummaryAndHistory() {
-    // Calculate Totals
+    // 1. Calculate All-Time Totals for Top Cards
     const totalExp = expenses.reduce((sum, item) => sum + item.amount, 0);
     totalExpenseEl.innerText = `₹${totalExp}`;
-    totalConsumptionEl.innerText = habits.length; // Showing total items tracked
+    totalConsumptionEl.innerText = habits.length; 
 
-    // Combine and Sort History (Newest First)
+    // 2. Calculate Current Month Budget
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    
+    // Filter expenses to only include the current calendar month
+    const monthlyExpenses = expenses.filter(exp => {
+        const expDate = new Date(exp.date);
+        return expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear;
+    }).reduce((sum, item) => sum + item.amount, 0);
+
+    // Calculate the physical width of the bar
+    let budgetPercentage = (monthlyExpenses / MONTHLY_ALLOWANCE) * 100;
+    if (budgetPercentage > 100) budgetPercentage = 100; // Cap visual at 100%
+
+    budgetFill.style.width = `${budgetPercentage}%`;
+
+    // Dynamic Color Warning System
+    if (budgetPercentage >= 90) {
+        budgetFill.style.backgroundColor = 'var(--danger)'; // Turns red at 90%
+    } else if (budgetPercentage >= 75) {
+        budgetFill.style.backgroundColor = '#f59e0b'; // Turns amber at 75%
+    } else {
+        budgetFill.style.backgroundColor = 'var(--success)'; // Stays green otherwise
+    }
+
+    // 3. Render Combined History List
     const combinedHistory = [...expenses, ...habits].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    historyList.innerHTML = ''; // Clear current list
+    historyList.innerHTML = ''; 
 
     if (combinedHistory.length === 0) {
         historyList.innerHTML = `
@@ -134,7 +159,6 @@ function renderSummaryAndHistory() {
         return;
     }
 
-    // Render each history item
     combinedHistory.forEach(item => {
         const li = document.createElement('li');
         li.classList.add('history-item');
@@ -147,7 +171,7 @@ function renderSummaryAndHistory() {
                 </div>
                 <span style="font-size: 0.8rem; font-weight: 600;">${item.date}</span>
             `;
-            li.style.borderLeftColor = 'var(--danger)'; // Red border for money out
+            li.style.borderLeftColor = 'var(--danger)'; 
         } else {
             li.innerHTML = `
                 <div style="display: flex; flex-direction: column;">
@@ -156,7 +180,7 @@ function renderSummaryAndHistory() {
                 </div>
                 <span style="font-size: 0.8rem; font-weight: 600;">${item.date}</span>
             `;
-            li.style.borderLeftColor = 'var(--success)'; // Green border for habits
+            li.style.borderLeftColor = 'var(--success)'; 
         }
         historyList.appendChild(li);
     });
