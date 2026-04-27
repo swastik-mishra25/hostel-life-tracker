@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Sent!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            color: #10b981; 
+            margin-bottom: 15px;
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.05);
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" style="max-width: 480px; margin: auto;">
+        <div class="glass-card" style="text-align: center; padding: 40px 20px;">
+            
+            <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Message Sent!</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">Thanks for reaching out! I'll get back to you as soon as possible.</p>
+            
+            <a href="index.html" class="back-btn">Return to Dashboard</a>
+            
+        </div>
+    </div>
+
+</body>
+</html>
