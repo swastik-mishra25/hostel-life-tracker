@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
     let habits = JSON.parse(localStorage.getItem('habits')) || [];
+    let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
 
     // Dynamic Master Budget Limit
     let monthlyAllowance = JSON.parse(localStorage.getItem('monthlyAllowance')) || 5000;
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     const expenseForm = document.getElementById('expense-form');
     const habitForm = document.getElementById('consumption-form');
+    const feedbackForm = document.getElementById('feedback-form'); 
     const timelineContainer = document.getElementById('github-timeline');
     const totalExpenseEl = document.getElementById('total-expense');
     const totalConsumptionEl = document.getElementById('total-consumption');
@@ -156,10 +158,18 @@ document.addEventListener('DOMContentLoaded', () => {
         expenseForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
             const amount = document.getElementById('exp-amount').value;
+            const itemName = document.getElementById('exp-item').value; 
             const category = document.getElementById('exp-category').value;
             const date = document.getElementById('exp-date').value;
 
-            expenses.push({ id: Date.now().toString(), type: 'expense', amount: parseFloat(amount), category: category, date: date });
+            expenses.push({ 
+                id: Date.now().toString(), 
+                type: 'expense', 
+                itemName: itemName, 
+                amount: parseFloat(amount), 
+                category: category, 
+                date: date 
+            });
             localStorage.setItem('expenses', JSON.stringify(expenses));
             
             expenseForm.reset(); 
@@ -181,6 +191,28 @@ document.addEventListener('DOMContentLoaded', () => {
             habitForm.reset();
             updateDashboard();
             showToast("Grind logged successfully!", "success");
+        });
+    }
+
+    // =========================================
+    // FEATURE: FORMSUBMIT LOCAL SAVE HOOK
+    // =========================================
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', function(e) {
+            // We do NOT preventDefault here, so the form naturally submits to FormSubmit
+            const feedbackText = document.getElementById('feedback-text').value;
+            
+            // Save locally right before the browser redirects to the Thank You page
+            feedbacks.push({ 
+                id: Date.now().toString(), 
+                text: feedbackText, 
+                date: new Date().toLocaleDateString() 
+            });
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+            
+            const submitBtn = document.getElementById('feedback-btn');
+            submitBtn.innerHTML = `<span>Sending...</span>`;
+            submitBtn.style.opacity = '0.7';
         });
     }
 
@@ -369,12 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const itemContent = item.type === 'expense' 
                 ? `<div style="display: flex; flex-direction: column;">
-                     <span style="font-weight: 700; color: var(--danger);">₹${item.amount}</span>
-                     <span style="font-size: 0.75rem; color: var(--text-muted);">${item.category}</span>
+                     <div style="display: flex; align-items: center; gap: 0.4rem;">
+                         <span style="font-weight: 800; color: var(--danger);">₹${item.amount}</span>
+                         <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-main);">${item.itemName || 'Expense'}</span>
+                     </div>
+                     <span style="font-size: 0.7rem; color: var(--text-muted);">${item.category}</span>
                    </div>`
                 : `<div style="display: flex; flex-direction: column;">
-                     <span style="font-weight: 700; color: var(--success);">${item.quantity} ${item.unit}</span>
-                     <span style="font-size: 0.75rem; color: var(--text-muted);">Daily Grind</span>
+                     <span style="font-weight: 800; color: var(--success);">${item.quantity} ${item.unit}</span>
+                     <span style="font-size: 0.7rem; color: var(--text-muted);">Daily Grind</span>
                    </div>`;
 
             li.style.borderLeftColor = item.type === 'expense' ? 'var(--danger)' : 'var(--success)'; 
