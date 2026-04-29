@@ -158,14 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
         expenseForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
             const amount = document.getElementById('exp-amount').value;
-            const itemName = document.getElementById('exp-item').value; 
             const category = document.getElementById('exp-category').value;
             const date = document.getElementById('exp-date').value;
 
             expenses.push({ 
                 id: Date.now().toString(), 
                 type: 'expense', 
-                itemName: itemName, 
                 amount: parseFloat(amount), 
                 category: category, 
                 date: date 
@@ -401,11 +399,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const itemContent = item.type === 'expense' 
                 ? `<div style="display: flex; flex-direction: column;">
-                     <div style="display: flex; align-items: center; gap: 0.4rem;">
-                         <span style="font-weight: 800; color: var(--danger);">₹${item.amount}</span>
-                         <span style="font-weight: 600; font-size: 0.85rem; color: var(--text-main);">${item.itemName || 'Expense'}</span>
-                     </div>
-                     <span style="font-size: 0.7rem; color: var(--text-muted);">${item.category}</span>
+                     <span style="font-weight: 800; color: var(--danger);">₹${item.amount}</span>
+                     <span style="font-size: 0.75rem; color: var(--text-muted);">${item.category}</span>
                    </div>`
                 : `<div style="display: flex; flex-direction: column;">
                      <span style="font-weight: 800; color: var(--success);">${item.quantity} ${item.unit}</span>
